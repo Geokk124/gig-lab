@@ -88,15 +88,11 @@
         document.querySelector('.nav-menu').classList.toggle('active');
     });
 
-    // 修改 API 地址
-    const API_URL = 'http://localhost:5000/api';
-
-    // 加载新闻列表
-    async function loadNewsList() {
+    // 新闻加载函数
+    async function loadNews() {
         try {
-            const response = await fetch(`${API_URL}/news`);
+            const response = await fetch(`${config.API_URL}/news`);
             const news = await response.json();
-            
             const newsListDiv = document.querySelector('.news-list');
             const recentNews = news.slice(0, 4); // 只显示最近4条新闻
             
@@ -115,7 +111,7 @@
     }
 
     // 页面加载时获取新闻列表
-    loadNewsList();
+    loadNews();
     </script>
 </body>
 </html> 
