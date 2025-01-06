@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GIG Geophysics Lab</title>
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo-container">
+                <img src="images/gig.png" alt="lab Logo" class="logo">
+                <img src="images/lab.png" alt="lab name" class="lab-name">
+                <img src="./images/logo.png" alt="university Logo" class="university-logo">
+            </div>
+        </div>
+        
+        <div class="nav-wrapper">
+            <div class="container">
+                <div class="menu-toggle">
+                    <span>☰</span>
+                </div>
+                <nav class="nav-menu">
+                    <a href="index.html" class="nav-item">
+                        <img src="images/icons/home-icon.jpg" alt="主页图标">
+                        <span>主页</span>
+                    </a>
+                    <a href="members.html" class="nav-item">
+                        <img src="images/icons/members-icon.png" alt="成员图标">
+                        <span>成员</span>
+                    </a>
+                    <a href="research.html" class="nav-item">
+                        <img src="images/icons/research-icon.jpg" alt="研究图标">
+                        <span>研究</span>
+                    </a>
+                    <a href="album.html" class="nav-item">
+                        <img src="images/icons/album-icon.jpg" alt="相册图标">
+                        <span>相册</span>
+                    </a>
+                    <a href="materials.html" class="nav-item">
+                        <img src="images/icons/materials-icon.jpg" alt="资料图标">
+                        <span>组会资料</span>
+                    </a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="search-box">
+            <input type="text" placeholder="Search GIG">
+            <button type="submit">搜索</button>
+        </div>
+
+        <main>
+            <section class="lab-intro">
+                <h2>GIG Geophysics Lab 简介</h2>
+                <div class="intro-content">
+                    <div class="intro-text">
+                        <p class="indent">GIG Geophysics Lab 隶属于中国科学院广州地球化学研究所，负责人是邓阳凡研究员。GIG Geophysics Lab 目前的主要研究兴趣包括：</p>
+                        <ul>
+                            <li>大尺度的岩石圈结构及其指示的地质过程；</li>
+                            <li>小尺度的地壳结构及其与断裂带、成矿带和撞击构造的关系；</li>
+                            <li>地壳幔结构与挥发份的关系。</li>
+                        </ul>
+                        <p class="indent">欢迎有志于科研的地球物理、计算机方向的学生、博士后加入，未来会围绕新方法构建，深部过程与资源等方面开展研究工作。目前学生中有2位获得了国家奖学金。</p>
+                        <p class="indent">如果您有兴趣加入GIG Geophysics Lab，请与邓阳凡老师联系，并提供必要的申请材料（如个人简介，成绩说明，发表论文等）。</p>
+                    </div>
+                    <div class="intro-image">
+                        <img src="images/team.jpg" alt="team photo">
+                    </div>
+                </div>
+            </section>
+
+            <section class="news">
+                <h2>组内新闻</h2>
+                <div class="news-list">
+                    <!-- 新闻列表将通过 JavaScript 动态加载 -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script>
+    document.querySelector('.menu-toggle').addEventListener('click', function() {
+        document.querySelector('.nav-menu').classList.toggle('active');
+    });
+
+    // 修改 API 地址
+    const API_URL = 'http://localhost:5000/api';
+
+    // 加载新闻列表
+    async function loadNewsList() {
+        try {
+            const response = await fetch(`${API_URL}/news`);
+            const news = await response.json();
+            
+            const newsListDiv = document.querySelector('.news-list');
+            const recentNews = news.slice(0, 4); // 只显示最近4条新闻
+            
+            newsListDiv.innerHTML = recentNews.map(item => `
+                <div class="news-item">
+                    <span class="news-date">${new Date(item.date).toLocaleDateString()}</span>
+                    ${item.type === 'external' 
+                        ? `<a href="${item.externalUrl}" target="_blank" class="indent">${item.title}</a>`
+                        : `<a href="news/detail.html?id=${item._id}" class="indent">${item.title}</a>`
+                    }
+                </div>
+            `).join('') + '<a href="news/archive.html" class="more-news">>> 更多</a>';
+        } catch (error) {
+            console.error('加载新闻列表失败：', error);
+        }
+    }
+
+    // 页面加载时获取新闻列表
+    loadNewsList();
+    </script>
+</body>
+</html> 
