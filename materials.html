@@ -51,6 +51,7 @@
         <div class="container">
             <div class="materials-container">
                 <h2>组会资料</h2>
+                <hr class="section-divider">
                 <div id="materials-list">
                     <!-- 资料列表将通过 JavaScript 动态加载 -->
                 </div>
@@ -94,7 +95,7 @@
                                             <span class="material-date">${new Date(material.uploadDate).toLocaleDateString('zh-CN')}</span>
                                         </div>
                                         <div class="material-actions">
-                                            <a href="/${material.path}" class="download-btn" download>下载</a>
+                                            <a href="${config.BASE_URL}/${material.path}" class="download-btn" download>下载</a>
                                         </div>
                                     </div>
                                 `).join('')}

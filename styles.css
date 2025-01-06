@@ -1606,3 +1606,13 @@ header {
         gap: 0.3rem;
     }
 } 
+
+/* 分隔线样式 */
+.section-divider {
+    border: none;
+    height: 2px;
+    background: linear-gradient(to right, #0056b3, #0056b3);
+    margin: 0.5rem 0 2rem 0;
+    width: 100%;
+    opacity: 0.8;
+}
