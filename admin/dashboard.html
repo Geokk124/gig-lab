@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理面板 - Geophysics lab</title>
+    <link rel="stylesheet" href="../styles.css">
+    <style>
+        .admin-nav {
+            display: flex;
+            gap: 20px;
+            padding: 15px 0;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #333;
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .nav-link:hover {
+            background-color: #f0f0f0;
+        }
+
+        .nav-link.active {
+            background-color: #0056b3;
+            color: white;
+        }
+
+        .logout-btn {
+            background-color: transparent;
+            border: 2px solid #dc3545;
+            color: #dc3545;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .logout-btn:hover {
+            background-color: #dc3545;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="admin-nav">
+            <a href="#photo-section" class="nav-link">照片管理</a>
+            <a href="#material-section" class="nav-link">资料管理</a>
+            <a href="#news-section" class="nav-link active">新闻管理</a>
+            <a href="#" id="logout-btn" class="logout-btn">退出</a>
+        </nav>
+        
+        <main class="admin-content">
+            <section id="news-section" class="upload-section">
+                <h2>新闻管理</h2>
+                <form id="news-form" class="upload-form">
+                    <div class="form-group">
+                        <label for="news-title">标题</label>
+                        <input type="text" id="news-title" name="title" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="news-date">发布日期</label>
+                        <input type="date" id="news-date" name="date" required>
+                    </div>
+                    
+                    <div id="content-sections">
+                        <div class="content-section">
+                            <div class="form-group">
+                                <label>内容段落</label>
+                                <textarea class="news-content-part" name="content[]" rows="5" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>图片</label>
+                                <div class="image-upload-container">
+                                    <input type="file" class="news-images" name="images[]" multiple accept="image/*">
+                                    <div class="image-descriptions">
+                                        <!-- 图片预览和描述将在这里动态生成 -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="button" id="add-section-btn" class="secondary-btn">添加新段落</button>
+                    
+                    <div class="form-group">
+                        <label for="news-type">类型</label>
+                        <select id="news-type" name="type" required>
+                            <option value="local">本地新闻</option>
+                            <option value="external">外部链接</option>
+                        </select>
+                    </div>
+                    <div class="form-group external-url-group" style="display: none;">
+                        <label for="external-url">外部链接</label>
+                        <input type="url" id="external-url" name="external_url">
+                    </div>
+                    <button type="submit">发布新闻</button>
+                </form>
+
+                <div class="news-list-admin">
+                    <h3>已发布新闻</h3>
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>日期</th>
+                                <th>标题</th>
+                                <th>类型</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- 新闻列表将通过 JavaScript 动态加载 -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="photo-section" class="upload-section" style="display: none;">
+                <h2>照片管理</h2>
+                <form id="photo-form" class="upload-form">
+                    <div class="form-group">
+                        <label for="photo-category">分类</label>
+                        <select id="photo-category" name="category" required>
+                            <option value="academic">学术活动</option>
+                            <option value="daily">日常生活</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="photos">选择照片</label>
+                        <input type="file" id="photos" name="photos" multiple accept="image/*" required>
+                        <div id="photo-previews" class="photo-previews"></div>
+                    </div>
+                    <button type="submit">上传照片</button>
+                </form>
+
+                <div class="photos-list">
+                    <h3>已上传照片</h3>
+                    <div class="photo-grid" id="uploaded-photos">
+                        <!-- 照片列表将通过 JavaScript 动态加载 -->
+                    </div>
+                </div>
+            </section>
+
+            <section id="material-section" class="upload-section" style="display: none;">
+                <h2>资料管理</h2>
+                <form id="material-form" class="upload-form">
+                    <div class="form-group">
+                        <label for="material-title">标题</label>
+                        <input type="text" id="material-title" name="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="material-description">描述</label>
+                        <textarea id="material-description" name="description" rows="3" placeholder="请输入资料描述"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="material-file">选择文件</label>
+                        <input type="file" id="material-file" name="file" required>
+                    </div>
+                    <button type="submit">上传资料</button>
+                </form>
+                
+                <div class="materials-list">
+                    <h3>已上传资料</h3>
+                    <div id="uploaded-materials">
+                        <!-- 资料列表将通过 JavaScript 动态加载 -->
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+    // 导航切换功能
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href').substring(1);
+            
+            // 更新导航状态
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            this.classList.add('active');
+            
+            // 显示对应的部分
+            document.querySelectorAll('.upload-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            document.getElementById(targetId).style.display = 'block';
+
+            // 如果切换到照片管理，加载照片列表
+            if (targetId === 'photo-section') {
+                loadPhotosList();
+            }
+            // 如果切换到资料管理，加载资料列表
+            if (targetId === 'material-section') {
+                loadMaterialsList();
+            }
+        });
+    });
+
+    // 照片预览功能
+    document.getElementById('photos').addEventListener('change', function(e) {
+        const previewsDiv = document.getElementById('photo-previews');
+        previewsDiv.innerHTML = '';
+        
+        Array.from(this.files).forEach((file, index) => {
+            const reader = new FileReader();
+            const previewContainer = document.createElement('div');
+            previewContainer.className = 'photo-preview-item';
+            
+            reader.onload = function(e) {
+                previewContainer.innerHTML = `
+                    <img src="${e.target.result}" alt="预览">
+                    <input type="text" 
+                           name="descriptions[]" 
+                           placeholder="请输入照片描述" 
+                           class="photo-description">
+                `;
+            };
+            
+            reader.readAsDataURL(file);
+            previewsDiv.appendChild(previewContainer);
+        });
+    });
+
+    // 上传照片
+    document.getElementById('photo-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                throw new Error('未登录，请先登录');
+            }
+
+            const formData = new FormData();
+            const category = document.getElementById('photo-category').value;
+            const photos = document.getElementById('photos').files;
+            const descriptions = Array.from(document.querySelectorAll('.photo-description')).map(input => input.value);
+
+            formData.append('category', category);
+            formData.append('descriptions', JSON.stringify(descriptions));
+            
+            Array.from(photos).forEach(photo => {
+                formData.append('photos', photo);
+            });
+
+            const response = await fetch('http://localhost:5000/api/photos', {
+                method: 'POST',
+                headers: {
+                    'x-auth-token': token
+                },
+                body: formData
+            });
+
+            if (!response.ok) {
+                throw new Error('上传失败');
+            }
+
+            alert('上传成功！');
+            this.reset();
+            document.getElementById('photo-previews').innerHTML = '';
+            loadPhotosList();
+        } catch (error) {
+            console.error('上传照片失败:', error);
+            alert('上传失败：' + error.message);
+        }
+    });
+
+    // 加载照片列表
+    async function loadPhotosList() {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                throw new Error('未登录，请先登录');
+            }
+
+            const response = await fetch('http://localhost:5000/api/photos');
+            const photos = await response.json();
+            
+            const photosContainer = document.getElementById('uploaded-photos');
+            let html = '';
+
+            // 处理每个类别的照片
+            for (const [category, monthGroups] of Object.entries(photos)) {
+                html += `<div class="photo-category"><h4>${category === 'academic' ? '学术活动' : '日常生活'}</h4>`;
+                
+                // 处理每个月份的照片
+                for (const [month, monthPhotos] of Object.entries(monthGroups)) {
+                    html += `
+                        <div class="month-group">
+                            <h5>${month}</h5>
+                            <div class="photo-grid">
+                                ${monthPhotos.map(photo => `
+                                    <div class="photo-item">
+                                        <img src="/${photo.path}" alt="${photo.description || ''}">
+                                        <p class="photo-desc">${photo.description || ''}</p>
+                                        <button class="delete-btn" onclick="deletePhoto('${photo._id}')">删除</button>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                html += '</div>';
+            }
+
+            photosContainer.innerHTML = html;
+        } catch (error) {
+            console.error('加载照片列表失败:', error);
+        }
+    }
+
+    // 删除照片
+    async function deletePhoto(id) {
+        if (!confirm('确定要删除这张照片吗？')) {
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                throw new Error('未登录，请先登录');
+            }
+
+            const response = await fetch(`http://localhost:5000/api/photos/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'x-auth-token': token
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('删除失败');
+            }
+
+            alert('删除成功！');
+            loadPhotosList();
+        } catch (error) {
+            console.error('删除照片失败:', error);
+            alert('删除失败：' + error.message);
+        }
+    }
+
+    // 退出登录
+    document.getElementById('logout-btn').addEventListener('click', function(e) {
+        e.preventDefault();
+        localStorage.removeItem('token');
+        window.location.href = '/admin/login.html';
+    });
+
+    // 页面加载时检查登录状态
+    window.addEventListener('load', function() {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/admin/login.html';
+            return;
+        }
+
+        // 根据当前显示的部分加载相应的列表
+        const activeSection = document.querySelector('.upload-section[style*="display: block"]');
+        if (activeSection) {
+            if (activeSection.id === 'photo-section') {
+                loadPhotosList();
+            } else if (activeSection.id === 'material-section') {
+                loadMaterialsList();
+            }
+        }
+    });
+
+    // 上传资料
+    document.getElementById('material-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                throw new Error('未登录，请先登录');
+            }
+
+            const formData = new FormData();
+            const title = document.getElementById('material-title').value;
+            const description = document.getElementById('material-description').value;
+            const file = document.getElementById('material-file').files[0];
+
+            formData.append('title', title);
+            formData.append('description', description);
+            formData.append('file', file);
+
+            const response = await fetch('http://localhost:5000/api/materials', {
+                method: 'POST',
+                headers: {
+                    'x-auth-token': token
+                },
+                body: formData
+            });
+
+            if (!response.ok) {
+                throw new Error('上传失败');
+            }
+
+            alert('上传成功！');
+            this.reset();
+            loadMaterialsList();
+        } catch (error) {
+            console.error('上传资料失败:', error);
+            alert('上传失败：' + error.message);
+        }
+    });
+
+    // 加载资料列表
+    async function loadMaterialsList() {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                throw new Error('未登录，请先登录');
+            }
+
+            const response = await fetch('http://localhost:5000/api/materials');
+            const materials = await response.json();
+            
+            const materialsContainer = document.getElementById('uploaded-materials');
+            let html = '';
+
+            // 按月份分组处理资料
+            const groupedMaterials = {};
+            materials.forEach(material => {
+                const date = new Date(material.uploadDate);
+                const month = date.toLocaleString('zh-CN', { year: 'numeric', month: 'long' });
+                
+                if (!groupedMaterials[month]) {
+                    groupedMaterials[month] = [];
+                }
+                groupedMaterials[month].push(material);
+            });
+
+            // 生成HTML
+            for (const [month, monthMaterials] of Object.entries(groupedMaterials)) {
+                html += `
+                    <div class="month-section">
+                        <h4>${month}</h4>
+                        <div class="materials-grid">
+                            ${monthMaterials.map(material => `
+                                <div class="material-item">
+                                    <div class="material-info">
+                                        <h5 class="material-title">${material.title}</h5>
+                                        <p class="material-desc">${material.description || ''}</p>
+                                        <span class="material-date">${new Date(material.uploadDate).toLocaleDateString('zh-CN')}</span>
+                                    </div>
+                                    <div class="material-actions">
+                                        <a href="/${material.path}" class="download-btn" download>下载</a>
+                                        <button class="delete-btn" onclick="deleteMaterial('${material._id}')">删除</button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            materialsContainer.innerHTML = html;
+        } catch (error) {
+            console.error('加载资料列表失败:', error);
+        }
+    }
+
+    // 删除资料
+    async function deleteMaterial(id) {
+        if (!confirm('确定要删除这个资料吗？')) {
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                throw new Error('未登录，请先登录');
+            }
+
+            const response = await fetch(`http://localhost:5000/api/materials/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'x-auth-token': token
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('删除失败');
+            }
+
+            alert('删除成功！');
+            loadMaterialsList();
+        } catch (error) {
+            console.error('删除资料失败:', error);
+            alert('删除失败：' + error.message);
+        }
+    }
+    </script>
+</body>
+</html> 
